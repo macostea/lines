@@ -1,5 +1,5 @@
 //
-//  Level.swift
+//  Game.swift
 //  Lines
 //
 //  Created by Mihai Costea on 22/09/14.
@@ -11,9 +11,24 @@ import Foundation
 let NumColumns = 7
 let NumRows = 7
 
-class Level {
+protocol GameDelegate: NSObjectProtocol {
+    func game(game: Game, didUpdateScore score: Int)
+}
+
+class Game {
+    weak var delegate: GameDelegate?
+    
     private var board = Array2D<Box>(columns: NumColumns, rows: NumRows)
     private var boxes = Set<Box>()
+    
+    var score: Int = 0 {
+        didSet {
+            if let delegate = self.delegate {
+                delegate.game(self, didUpdateScore: score)
+            }
+        }
+    }
+    var currentLevel = 2
     
     init() {
         
@@ -58,10 +73,13 @@ class Level {
         
         if let foundMove = lookup.findMove() {
             self.board[move.box.coordinate] = nil
+            self.boxes.removeElement(move.box)
             move.box.coordinate = move.coordinate
             self.board[move.coordinate] = move.box
+            self.boxes.addElement(move.box)
             
             if let chain = self.chainAtCoordinate(move.coordinate) {
+                self.score += chain.score
                 return (chain, foundMove)
             }
             
@@ -73,7 +91,7 @@ class Level {
     
     private func chainAtCoordinate(coordinate: Coordinate) -> Chain? {
         if let box = self.board[coordinate] {
-            var chain = Chain()
+            var chain = Chain(score: 0)
             chain.append(box)
             let boxColor = self.board[coordinate]!.boxType
             
@@ -92,7 +110,7 @@ class Level {
                 return chain
             }
             
-            chain = Chain()
+            chain = Chain(score: 0)
             chain.append(box)
             possibleChain = [Box]()
             var vertLength = 1
@@ -109,12 +127,31 @@ class Level {
                 return chain
             }
             
-            chain = Chain()
+            // 1st diagonal
+            chain = Chain(score: 0)
             chain.append(box)
             possibleChain = [Box]()
             var diagnoalLength = 1
             for var i = coordinate.row + 1, j = coordinate.column - 1; i < NumRows && j >= 0 && self.board[(j, i)]?.boxType == boxColor;
                 ++i, --j, ++diagnoalLength {
+                    possibleChain.append(self.board[(j, i)]!)
+            }
+            for var i = coordinate.row - 1, j = coordinate.column + 1; i >= 0 && j < NumColumns && self.board[(j, i)]?.boxType == boxColor;
+                --i, ++j, ++diagnoalLength {
+                    possibleChain.append(self.board[(j, i)]!)
+            }
+            if diagnoalLength >= 4 {
+                chain.append(possibleChain)
+                return chain
+            }
+            
+            // 2nd diagonal
+            chain = Chain(score: 0)
+            chain.append(box)
+            possibleChain = [Box]()
+            diagnoalLength = 1
+            for var i = coordinate.row - 1, j = coordinate.column - 1; i >= 0 && j >= 0 && self.board[(j, i)]?.boxType == boxColor;
+                --i, --j, ++diagnoalLength {
                     possibleChain.append(self.board[(j, i)]!)
             }
             for var i = coordinate.row + 1, j = coordinate.column + 1; i < NumRows && j < NumColumns && self.board[(j, i)]?.boxType == boxColor;

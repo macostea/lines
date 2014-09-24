@@ -9,13 +9,14 @@
 import SpriteKit
 
 class GameScene: SKScene {
-    var level: Level!
+    var game: Game!
     let tileWidth: CGFloat = 52.0
     let tileHeight: CGFloat = 52.0
     
     let gameLayer = SKNode()
     let boxesLayer = SKNode()
     let tilesLayer = SKNode()
+    let scoreSprite = SKLabelNode(text: "0 points")
     
     var selectedBox: Box?
     
@@ -33,7 +34,7 @@ class GameScene: SKScene {
         
         let (success, coordinate) = self.convertPoint(location)
         if success {
-            if let box = self.level.boxAt(coordinate) {
+            if let box = self.game.boxAt(coordinate) {
                 self.selectBox(box)
             } else {
                 if let box = self.selectedBox {
@@ -59,6 +60,14 @@ class GameScene: SKScene {
         
         self.boxesLayer.position = layerPosition
         self.gameLayer.addChild(self.boxesLayer)
+        
+        self.addScoreSprite()
+    }
+    
+    func addScoreSprite() {
+        self.scoreSprite.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+        
+        self.gameLayer.addChild(self.scoreSprite)
     }
     
     func addSpritesForBoxes(boxes: Set<Box>) {
@@ -95,6 +104,10 @@ class GameScene: SKScene {
         }
     }
     
+    func updateScore(score: Int) {
+        self.scoreSprite.text = "\(score) points"
+    }
+    
     func selectBox(box: Box) {
         self.deselectBox(self.selectedBox)
         if (self.selectedBox != box) {
@@ -117,7 +130,10 @@ class GameScene: SKScene {
     }
     
     func moveBox(box: Box, toCoordinate coordinate: Coordinate) {
-        let moveResult = self.level.performMove(Move(box: box, toCoordinate: coordinate))
+        self.deselectBox(self.selectedBox)
+        self.selectedBox = nil
+        
+        let moveResult = self.game.performMove(Move(box: box, toCoordinate: coordinate))
         if let move = moveResult.move {
         
             var actions = [SKAction]()
@@ -128,16 +144,13 @@ class GameScene: SKScene {
             }
             
             box.sprite?.runAction(SKAction.sequence(actions)) {
-                self.deselectBox(self.selectedBox)
-                self.selectedBox = nil
-                
                 if let chain = moveResult.chain {
                     // Remove chain if exists
                     self.removeSpritesForBoxes(chain.elements)
-                    self.level.removeBoxes(chain.elements)
+                    self.game.removeBoxes(chain.elements)
                 } else {
                     // Add more boxes if a chain was not made
-                    let newBoxes = self.level.createBoxes(2)
+                    let newBoxes = self.game.createBoxes(2)
                     self.addSpritesForBoxes(newBoxes)
                 }
             }

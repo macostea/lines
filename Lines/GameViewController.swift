@@ -9,12 +9,15 @@
 import UIKit
 import SpriteKit
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, GameDelegate {
     var scene: GameScene!
-    var level: Level!
+    var game: Game!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.subscribeToNotifications()
+        GameKitHelper.sharedGameKitHelper.authenticateLocalPlayer()
             
         // Configure the view.
         let skView = self.view as SKView
@@ -33,17 +36,54 @@ class GameViewController: UIViewController {
         
         skView.presentScene(scene)
         
-        self.level = Level()
-        self.scene.level = self.level
+        self.game = Game()
+        self.game.delegate = self
+        self.scene.game = self.game
         self.scene.addTiles()
         
         self.beginGame()
     }
     
-    func beginGame() {
-        let newBoxes = self.level.createInitialBoxes()
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.unsubscribeFromNotifications()
+    }
+    
+    // MARK: - Notifications
+    
+    private func subscribeToNotifications() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("showAuthenticationViewController:"), name: PresentAuthenticationViewControllerNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("applicationDidEnterBackground:"), name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("applicationWillTerminate:"), name: UIApplicationWillTerminateNotification, object: nil)
+    }
+    
+    private func unsubscribeFromNotifications() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: PresentAuthenticationViewControllerNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationDidEnterBackgroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationWillTerminateNotification, object: nil)
+    }
+    
+    func showAuthenticationViewController(notification: NSNotification) {
+        self.presentViewController(GameKitHelper.sharedGameKitHelper.authenticationViewController, animated: true, completion: nil)
+    }
+    
+    func applicationDidEnterBackground(notification: NSNotification) {
+        GameKitHelper.sharedGameKitHelper.reportScore(Int64(self.game.score))
+    }
+    
+    func applicationWillTerminate(notification: NSNotification) {
+        GameKitHelper.sharedGameKitHelper.reportScore(Int64(self.game.score))
+    }
+    
+    // MARK: - Private methods
+    
+    private func beginGame() {
+        let newBoxes = self.game.createInitialBoxes()
         self.scene.addSpritesForBoxes(newBoxes)
     }
+    
+    // MARK: - Overridden
 
     override func shouldAutorotate() -> Bool {
         return true
@@ -64,5 +104,11 @@ class GameViewController: UIViewController {
 
     override func prefersStatusBarHidden() -> Bool {
         return true
+    }
+    
+    // MARK: - GameDelegate
+    
+    func game(game: Game, didUpdateScore score: Int) {
+        self.scene.updateScore(score)
     }
 }

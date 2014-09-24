@@ -11,13 +11,21 @@ import Foundation
 struct Chain {
     private var boxes: Set<Box> = Set<Box>()
     
+    var score: Int
+    
+    init(score: Int) {
+        self.score = score
+    }
+    
     mutating func append(box: Box) {
         self.boxes.addElement(box)
+        self.score++
     }
     
     mutating func append(boxes: [Box]) {
         for box in boxes {
             self.boxes.addElement(box)
+            self.score++
         }
     }
     

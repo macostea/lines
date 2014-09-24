@@ -54,6 +54,6 @@ struct Set<T: Hashable>: SequenceType, Printable {
     // MARK: - Printable
     
     var description: String {
-        return dictionary.description
+        return dictionary.debugDescription
     }
 }
