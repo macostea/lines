@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		A711284D19D33EDC001554B3 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A711284C19D33EDC001554B3 /* GameKit.framework */; };
 		A711285019D34524001554B3 /* GameKitHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A711284F19D34524001554B3 /* GameKitHelper.swift */; };
+		A7356D9919D57BC900D48CDE /* UIColor+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7356D9819D57BC900D48CDE /* UIColor+Additions.swift */; };
+		A7356D9B19D5961600D48CDE /* TutorialScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7356D9A19D5961600D48CDE /* TutorialScene.swift */; };
 		A749013119D058B700427322 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A749013019D058B700427322 /* AppDelegate.swift */; };
 		A749013519D058B700427322 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A749013419D058B700427322 /* GameScene.swift */; };
 		A749013719D058B700427322 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A749013619D058B700427322 /* GameViewController.swift */; };
@@ -40,6 +42,8 @@
 /* Begin PBXFileReference section */
 		A711284C19D33EDC001554B3 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		A711284F19D34524001554B3 /* GameKitHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameKitHelper.swift; sourceTree = "<group>"; };
+		A7356D9819D57BC900D48CDE /* UIColor+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Additions.swift"; sourceTree = "<group>"; };
+		A7356D9A19D5961600D48CDE /* TutorialScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialScene.swift; sourceTree = "<group>"; };
 		A749012B19D058B700427322 /* Lines.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lines.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A749012F19D058B700427322 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A749013019D058B700427322 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -90,6 +94,86 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
+		A7356D8F19D57B2200D48CDE /* Path Finding */ = {
+			isa = PBXGroup;
+			children = (
+				A7E1869A19D0B27A00E32F55 /* Step.swift */,
+				A7E1869C19D0B46B00E32F55 /* AStarLookup.swift */,
+			);
+			name = "Path Finding";
+			sourceTree = "<group>";
+		};
+		A7356D9019D57B2D00D48CDE /* Data Collections */ = {
+			isa = PBXGroup;
+			children = (
+				A768454D19D05E0B00EA4799 /* Set.swift */,
+				A7E1869619D0A86A00E32F55 /* Array2D.swift */,
+			);
+			name = "Data Collections";
+			sourceTree = "<group>";
+		};
+		A7356D9119D57B3900D48CDE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A749015819D05A8D00427322 /* Box.swift */,
+				A7E1869819D0AF2100E32F55 /* Move.swift */,
+				A7A42A7719D2DED10092373A /* Chain.swift */,
+				A768454F19D0600600EA4799 /* Coordinate.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		A7356D9219D57B4100D48CDE /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A749013619D058B700427322 /* GameViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		A7356D9319D57B4700D48CDE /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				A749013419D058B700427322 /* GameScene.swift */,
+				A7356D9A19D5961600D48CDE /* TutorialScene.swift */,
+			);
+			name = Scenes;
+			sourceTree = "<group>";
+		};
+		A7356D9419D57B5100D48CDE /* Game Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A749015619D05A3C00427322 /* Game.swift */,
+			);
+			name = "Game Controllers";
+			sourceTree = "<group>";
+		};
+		A7356D9519D57B5900D48CDE /* Business Logic */ = {
+			isa = PBXGroup;
+			children = (
+				A7356D9719D57BB500D48CDE /* Additions */,
+				A7356D9419D57B5100D48CDE /* Game Controllers */,
+				A7356D9619D57B6600D48CDE /* GameKit */,
+			);
+			name = "Business Logic";
+			sourceTree = "<group>";
+		};
+		A7356D9619D57B6600D48CDE /* GameKit */ = {
+			isa = PBXGroup;
+			children = (
+				A711284F19D34524001554B3 /* GameKitHelper.swift */,
+			);
+			name = GameKit;
+			sourceTree = "<group>";
+		};
+		A7356D9719D57BB500D48CDE /* Additions */ = {
+			isa = PBXGroup;
+			children = (
+				A7356D9819D57BC900D48CDE /* UIColor+Additions.swift */,
+			);
+			name = Additions;
+			sourceTree = "<group>";
+		};
 		A749012219D058B700427322 = {
 			isa = PBXGroup;
 			children = (
@@ -112,21 +196,15 @@
 			isa = PBXGroup;
 			children = (
 				A749013019D058B700427322 /* AppDelegate.swift */,
-				A749013419D058B700427322 /* GameScene.swift */,
-				A749013619D058B700427322 /* GameViewController.swift */,
-				A749015619D05A3C00427322 /* Game.swift */,
-				A749015819D05A8D00427322 /* Box.swift */,
-				A7E1869819D0AF2100E32F55 /* Move.swift */,
-				A7A42A7719D2DED10092373A /* Chain.swift */,
-				A711284F19D34524001554B3 /* GameKitHelper.swift */,
+				A7356D9319D57B4700D48CDE /* Scenes */,
+				A7356D9219D57B4100D48CDE /* View Controllers */,
+				A7356D9119D57B3900D48CDE /* Model */,
+				A7356D9519D57B5900D48CDE /* Business Logic */,
 				A749013819D058B700427322 /* Main.storyboard */,
 				A749013B19D058B700427322 /* Images.xcassets */,
 				A749013D19D058B700427322 /* LaunchScreen.xib */,
-				A768454D19D05E0B00EA4799 /* Set.swift */,
-				A768454F19D0600600EA4799 /* Coordinate.swift */,
-				A7E1869619D0A86A00E32F55 /* Array2D.swift */,
-				A7E1869A19D0B27A00E32F55 /* Step.swift */,
-				A7E1869C19D0B46B00E32F55 /* AStarLookup.swift */,
+				A7356D9019D57B2D00D48CDE /* Data Collections */,
+				A7356D8F19D57B2200D48CDE /* Path Finding */,
 				A711284E19D33F08001554B3 /* Frameworks */,
 				A749012E19D058B700427322 /* Supporting Files */,
 			);
@@ -268,6 +346,7 @@
 				A7E1869919D0AF2100E32F55 /* Move.swift in Sources */,
 				A749013719D058B700427322 /* GameViewController.swift in Sources */,
 				A768455019D0600600EA4799 /* Coordinate.swift in Sources */,
+				A7356D9B19D5961600D48CDE /* TutorialScene.swift in Sources */,
 				A768454E19D05E0B00EA4799 /* Set.swift in Sources */,
 				A7E1869B19D0B27A00E32F55 /* Step.swift in Sources */,
 				A749015919D05A8D00427322 /* Box.swift in Sources */,
@@ -277,6 +356,7 @@
 				A7A42A7819D2DED10092373A /* Chain.swift in Sources */,
 				A7E1869D19D0B46B00E32F55 /* AStarLookup.swift in Sources */,
 				A749013119D058B700427322 /* AppDelegate.swift in Sources */,
+				A7356D9919D57BC900D48CDE /* UIColor+Additions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

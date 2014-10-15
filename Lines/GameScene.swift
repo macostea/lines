@@ -10,13 +10,15 @@ import SpriteKit
 
 class GameScene: SKScene {
     var game: Game!
-    let tileWidth: CGFloat = 52.0
-    let tileHeight: CGFloat = 52.0
+    let tileWidth: CGFloat = 45.0
+    let tileHeight: CGFloat = 45.0
     
     let gameLayer = SKNode()
     let boxesLayer = SKNode()
     let tilesLayer = SKNode()
     let scoreSprite = SKLabelNode(text: "0 points")
+    
+    var currentScore = 0
     
     var selectedBox: Box?
     
@@ -53,7 +55,7 @@ class GameScene: SKScene {
         
         self.addChild(self.gameLayer)
         
-        let layerPosition = CGPoint(x: -(self.tileWidth-2.0) * CGFloat(NumColumns) / 2, y: -(self.tileHeight-2.0) * CGFloat(NumRows) / 2)
+        let layerPosition = CGPoint(x: -(self.tileWidth) * CGFloat(NumColumns) / 2, y: -(self.tileHeight) * CGFloat(NumRows) / 2)
         
         self.tilesLayer.position = layerPosition
         self.gameLayer.addChild(self.tilesLayer)
@@ -65,7 +67,8 @@ class GameScene: SKScene {
     }
     
     func addScoreSprite() {
-        self.scoreSprite.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+        self.scoreSprite.position = CGPoint(x: CGRectGetMidX(self.frame) - 80.0, y: self.tileHeight * CGFloat(NumRows) / 2 + 20.0)
+        self.scoreSprite.fontColor = UIColor.linesOrangeColor()
         
         self.gameLayer.addChild(self.scoreSprite)
     }
@@ -98,6 +101,7 @@ class GameScene: SKScene {
         for row in 0..<NumRows {
             for column in 0..<NumColumns {
                 let tileNode = SKShapeNode(rectOfSize: CGSize(width: self.tileWidth, height: self.tileHeight))
+                tileNode.strokeColor = UIColor.linesGrayColor()
                 tileNode.position = self.pointFor(column: column, row: row)
                 self.tilesLayer.addChild(tileNode)
             }
@@ -105,7 +109,7 @@ class GameScene: SKScene {
     }
     
     func updateScore(score: Int) {
-        self.scoreSprite.text = "\(score) points"
+        self.currentScore = score
     }
     
     func selectBox(box: Box) {
@@ -148,10 +152,22 @@ class GameScene: SKScene {
                     // Remove chain if exists
                     self.removeSpritesForBoxes(chain.elements)
                     self.game.removeBoxes(chain.elements)
+                    
+                    self.scoreSprite.text = "\(self.currentScore) points"
                 } else {
                     // Add more boxes if a chain was not made
-                    let newBoxes = self.game.createBoxes(2)
-                    self.addSpritesForBoxes(newBoxes)
+                    if let newBoxes = self.game.createBoxes(self.game.currentLevel) {
+                        self.addSpritesForBoxes(newBoxes)
+                        
+                        for newBox in newBoxes {
+                            if let chain = self.game.chainAtCoordinate(newBox.coordinate) {
+                                self.removeSpritesForBoxes(chain.elements)
+                                self.game.removeBoxes(chain.elements)
+                            }
+                        }
+                    } else {
+                        self.game.delegate?.gameDidFinish(self.game)
+                    }
                 }
             }
         } else {

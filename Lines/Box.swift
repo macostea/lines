@@ -29,10 +29,10 @@ enum BoxType: Int, Printable {
     
     var spriteColor: UIColor {
         let spriteColors = [
-            UIColor.redColor(),
-            UIColor.blueColor(),
-            UIColor.greenColor(),
-            UIColor.yellowColor()
+            UIColor.linesRedColor(),
+            UIColor.linesBlueColor(),
+            UIColor.linesGreenColor(),
+            UIColor.linesYellowColor()
             ]
             
         return spriteColors[self.toRaw() - 1]

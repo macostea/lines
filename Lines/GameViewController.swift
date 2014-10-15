@@ -11,6 +11,7 @@ import SpriteKit
 
 class GameViewController: UIViewController, GameDelegate {
     var scene: GameScene!
+    var tutorial: TutorialScene!
     var game: Game!
 
     override func viewDidLoad() {
@@ -21,18 +22,18 @@ class GameViewController: UIViewController, GameDelegate {
             
         // Configure the view.
         let skView = self.view as SKView
-        skView.showsFPS = true
-        skView.showsNodeCount = true
         skView.multipleTouchEnabled = false
+        skView.backgroundColor = UIColor.linesWhiteColor()
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true
         
-        self.scene = GameScene(size: skView.bounds.size)
+        self.scene = TutorialScene(size: skView.bounds.size)
+//        self.scene = GameScene(size: skView.bounds.size)
 
         /* Set the scale mode to scale to fit the window */
         scene.scaleMode = .AspectFill
-        
+        scene.backgroundColor = SKColor.linesWhiteColor()
         
         skView.presentScene(scene)
         
@@ -41,7 +42,8 @@ class GameViewController: UIViewController, GameDelegate {
         self.scene.game = self.game
         self.scene.addTiles()
         
-        self.beginGame()
+//        self.beginGame()
+        self.startTutorial()
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -83,6 +85,11 @@ class GameViewController: UIViewController, GameDelegate {
         self.scene.addSpritesForBoxes(newBoxes)
     }
     
+    private func startTutorial() {
+        let newBoxes = self.game.createTutorialBoxes()
+        self.scene.addSpritesForBoxes(newBoxes)
+    }
+    
     // MARK: - Overridden
 
     override func shouldAutorotate() -> Bool {
@@ -110,5 +117,17 @@ class GameViewController: UIViewController, GameDelegate {
     
     func game(game: Game, didUpdateScore score: Int) {
         self.scene.updateScore(score)
+    }
+    
+    func game(game: Game, didUpdateMultiplier multiplier: Int) {
+//        self.scene.updateScore(score)
+    }
+    
+    func game(game: Game, didUpdateLevel level: Int) {
+        
+    }
+    
+    func gameDidFinish(game: Game) {
+        println("Game Over")
     }
 }

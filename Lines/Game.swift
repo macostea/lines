@@ -13,6 +13,9 @@ let NumRows = 7
 
 protocol GameDelegate: NSObjectProtocol {
     func game(game: Game, didUpdateScore score: Int)
+    func game(game: Game, didUpdateMultiplier multiplier: Int)
+    func game(game: Game, didUpdateLevel level: Int)
+    func gameDidFinish(game: Game)
 }
 
 class Game {
@@ -28,7 +31,22 @@ class Game {
             }
         }
     }
-    var currentLevel = 2
+    
+    var multiplier: Int = 1 {
+        didSet {
+            if let delegate = self.delegate {
+                delegate.game(self, didUpdateMultiplier: multiplier)
+            }
+        }
+    }
+    
+    var currentLevel: Int = 2 {
+        didSet {
+            if let delegate = self.delegate {
+                delegate.game(self, didUpdateLevel: currentLevel)
+            }
+        }
+    }
     
     init() {
         
@@ -42,10 +60,109 @@ class Game {
     }
     
     func createInitialBoxes() -> Set<Box> {
-        return self.createBoxes(4)
+        return self.createBoxes(4)!
     }
     
-    func createBoxes(numberOfBoxes: Int) -> Set<Box> {
+    func createTutorialBoxes() -> Set<Box> {
+        var boxes = Set<Box>()
+        var l = Box(column: 0, row: 4, boxType: .Red)
+        self.boxes.addElement(l)
+        boxes.addElement(l)
+        self.board[l.coordinate] = l
+        
+        l = Box(column: 0, row: 3, boxType: .Red)
+        self.boxes.addElement(l)
+        boxes.addElement(l)
+        self.board[l.coordinate] = l
+        
+        l = Box(column: 0, row: 2, boxType: .Red)
+        self.boxes.addElement(l)
+        boxes.addElement(l)
+        self.board[l.coordinate] = l
+        
+        l = Box(column: 1, row: 2, boxType: .Red)
+        self.boxes.addElement(l)
+        boxes.addElement(l)
+        self.board[l.coordinate] = l
+        
+        var i = Box(column: 2, row: 4, boxType: .Blue)
+        self.boxes.addElement(i)
+        boxes.addElement(i)
+        self.board[i.coordinate] = i
+        
+        i = Box(column: 2, row: 3, boxType: .Blue)
+        self.boxes.addElement(i)
+        boxes.addElement(i)
+        self.board[i.coordinate] = i
+        
+        i = Box(column: 2, row: 2, boxType: .Blue)
+        self.boxes.addElement(i)
+        boxes.addElement(i)
+        self.board[i.coordinate] = i
+        
+        var n = Box(column: 3, row: 4, boxType: .Green)
+        self.boxes.addElement(n)
+        boxes.addElement(n)
+        self.board[n.coordinate] = n
+        
+        n = Box(column: 3, row: 3, boxType: .Green)
+        self.boxes.addElement(n)
+        boxes.addElement(n)
+        self.board[n.coordinate] = n
+        
+        n = Box(column: 3, row: 2, boxType: .Green)
+        self.boxes.addElement(n)
+        boxes.addElement(n)
+        self.board[n.coordinate] = n
+
+        n = Box(column: 4, row: 4, boxType: .Green)
+        self.boxes.addElement(n)
+        boxes.addElement(n)
+        self.board[n.coordinate] = n
+        
+        n = Box(column: 4, row: 3, boxType: .Green)
+        self.boxes.addElement(n)
+        boxes.addElement(n)
+        self.board[n.coordinate] = n
+        
+        n = Box(column: 4, row: 2, boxType: .Green)
+        self.boxes.addElement(n)
+        boxes.addElement(n)
+        self.board[n.coordinate] = n
+        
+        var e = Box(column: 6, row: 4, boxType: .Yellow)
+        self.boxes.addElement(e)
+        boxes.addElement(e)
+        self.board[e.coordinate] = e
+        
+        e = Box(column: 5, row: 4, boxType: .Yellow)
+        self.boxes.addElement(e)
+        boxes.addElement(e)
+        self.board[e.coordinate] = e
+        
+        e = Box(column: 5, row: 3, boxType: .Yellow)
+        self.boxes.addElement(e)
+        boxes.addElement(e)
+        self.board[e.coordinate] = e
+        
+        e = Box(column: 5, row: 2, boxType: .Yellow)
+        self.boxes.addElement(e)
+        boxes.addElement(e)
+        self.board[e.coordinate] = e
+        
+        e = Box(column: 6, row: 2, boxType: .Yellow)
+        self.boxes.addElement(e)
+        boxes.addElement(e)
+        self.board[e.coordinate] = e
+        
+        return boxes
+    }
+    
+    func createBoxes(numberOfBoxes: Int) -> Set<Box>? {
+        if self.numberOfEmptyTiles() < numberOfBoxes {
+            return nil
+        }
+        
         var boxes = Set<Box>()
         for i in 0..<numberOfBoxes{
             var box: Box
@@ -79,8 +196,17 @@ class Game {
             self.boxes.addElement(move.box)
             
             if let chain = self.chainAtCoordinate(move.coordinate) {
-                self.score += chain.score
+                self.score += self.multiplier * chain.score
+                if self.score >= 80 && self.currentLevel == 2 {
+                    self.currentLevel++
+                }
+                if self.score >= 180 && self.currentLevel == 3 {
+                    self.currentLevel++
+                }
+                self.multiplier++
                 return (chain, foundMove)
+            } else {
+                self.multiplier = 1
             }
             
             return (nil, foundMove)
@@ -89,7 +215,7 @@ class Game {
         return (nil, nil)
     }
     
-    private func chainAtCoordinate(coordinate: Coordinate) -> Chain? {
+    func chainAtCoordinate(coordinate: Coordinate) -> Chain? {
         if let box = self.board[coordinate] {
             var chain = Chain(score: 0)
             chain.append(box)
@@ -167,6 +293,10 @@ class Game {
         }
         
         return nil
+    }
+    
+    private func numberOfEmptyTiles() -> Int {
+        return NumRows * NumColumns - self.boxes.count
     }
     
 }
