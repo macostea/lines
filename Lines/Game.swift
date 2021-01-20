@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import GameplayKit
 
 let NumColumns = 7
 let NumRows = 7
@@ -23,6 +24,7 @@ class Game {
     
     private var board = Array2D<Box>(columns: NumColumns, rows: NumRows)
     private var boxes = Set<Box>()
+    private var graph = GKGridGraph(fromGridStartingAt: vector_int2(0,0), width: Int32(NumColumns), height: Int32(NumRows), diagonalsAllowed: false)
     
     var score: Int = 0 {
         didSet {
@@ -49,7 +51,6 @@ class Game {
     }
     
     init() {
-        
     }
     
     func boxAt(coordinate: Coordinate) -> Box? {
@@ -173,6 +174,7 @@ class Game {
             self.boxes.insert(box)
             boxes.insert(box)
             self.board[box.coordinate] = box
+            self.graph.remove([self.graph.node(atGridPosition: vector_int2(Int32(box.coordinate.column), Int32(box.coordinate.row)))!])
         }
         
         return boxes
@@ -182,18 +184,28 @@ class Game {
         for box in boxes {
             self.board[box.coordinate] = nil
             self.boxes.remove(box)
+            self.graph.connectToAdjacentNodes(node: GKGridGraphNode(gridPosition: vector_int2(Int32(box.coordinate.column), Int32(box.coordinate.row))))
         }
     }
     
-    func performMove(move: Move) -> (chain: Chain?, move: Move?) {
-        let lookup = AStarLookup(source: move.box.coordinate, destination: move.coordinate, board: self.board)
+    func performMove(move: Move) -> (chain: Chain?, move: Move?) {        
+        self.graph.connectToAdjacentNodes(node: GKGridGraphNode(gridPosition: vector_int2(Int32(move.box.coordinate.column), Int32(move.box.coordinate.row))))
+        let path = self.graph.findPath(from: self.graph.node(atGridPosition: vector_int2(Int32(move.box.coordinate.column), Int32(move.box.coordinate.row)))!,
+                                       to: self.graph.node(atGridPosition: vector_int2(Int32(move.coordinate.column), Int32(move.coordinate.row)))!)
         
-        if let foundMove = lookup.findMove() {
+        if !path.isEmpty {
+            var foundMove = Move(box: move.box, toCoordinate: move.coordinate)
+            foundMove.coordinateList = path.map({ (node: GKGraphNode) in
+                let n = node as! GKGridGraphNode
+                return Coordinate(column: Int(n.gridPosition.x), row: Int(n.gridPosition.y))
+            })
             self.board[move.box.coordinate] = nil
             self.boxes.remove(move.box)
             move.box.coordinate = move.coordinate
             self.board[move.coordinate] = move.box
-            self.boxes.remove(move.box)
+            self.boxes.insert(move.box)
+            
+            self.graph.remove([self.graph.node(atGridPosition: vector_int2(Int32(move.coordinate.column), Int32(move.coordinate.row)))!])
             
             if let chain = self.chainAtCoordinate(coordinate: move.coordinate) {
                 self.score += self.multiplier * chain.score
@@ -212,6 +224,7 @@ class Game {
             return (nil, foundMove)
         }
         
+        self.graph.remove([self.graph.node(atGridPosition: vector_int2(Int32(move.box.coordinate.column), Int32(move.box.coordinate.row)))!])
         return (nil, nil)
     }
     

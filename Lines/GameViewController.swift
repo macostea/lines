@@ -28,8 +28,8 @@ class GameViewController: UIViewController, GameDelegate {
         /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true
         
-        self.scene = TutorialScene(size: skView.bounds.size)
-//        self.scene = GameScene(size: skView.bounds.size)
+//        self.scene = TutorialScene(size: skView.bounds.size)
+        self.scene = GameScene(size: skView.bounds.size)
 
         /* Set the scale mode to scale to fit the window */
         scene.scaleMode = .aspectFill
@@ -42,8 +42,8 @@ class GameViewController: UIViewController, GameDelegate {
         self.scene.game = self.game
         self.scene.addTiles()
         
-//        self.beginGame()
-        self.startTutorial()
+        self.beginGame()
+//        self.startTutorial()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
