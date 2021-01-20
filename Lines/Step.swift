@@ -12,7 +12,7 @@ func ==(lhs: Step, rhs: Step) -> Bool {
     return lhs.position == rhs.position
 }
 
-class Step: Printable, Equatable {
+class Step: Equatable {
     var position: Coordinate
     var gScore: Int
     var hScore: Int

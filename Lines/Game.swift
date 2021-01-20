@@ -27,7 +27,7 @@ class Game {
     var score: Int = 0 {
         didSet {
             if let delegate = self.delegate {
-                delegate.game(self, didUpdateScore: score)
+                delegate.game(game: self, didUpdateScore: score)
             }
         }
     }
@@ -35,7 +35,7 @@ class Game {
     var multiplier: Int = 1 {
         didSet {
             if let delegate = self.delegate {
-                delegate.game(self, didUpdateMultiplier: multiplier)
+                delegate.game(game: self, didUpdateMultiplier: multiplier)
             }
         }
     }
@@ -43,7 +43,7 @@ class Game {
     var currentLevel: Int = 2 {
         didSet {
             if let delegate = self.delegate {
-                delegate.game(self, didUpdateLevel: currentLevel)
+                delegate.game(game: self, didUpdateLevel: currentLevel)
             }
         }
     }
@@ -60,99 +60,99 @@ class Game {
     }
     
     func createInitialBoxes() -> Set<Box> {
-        return self.createBoxes(4)!
+        return self.createBoxes(numberOfBoxes: 4)!
     }
     
     func createTutorialBoxes() -> Set<Box> {
         var boxes = Set<Box>()
         var l = Box(column: 0, row: 4, boxType: .Red)
-        self.boxes.addElement(l)
-        boxes.addElement(l)
+        self.boxes.insert(l)
+        boxes.insert(l)
         self.board[l.coordinate] = l
         
         l = Box(column: 0, row: 3, boxType: .Red)
-        self.boxes.addElement(l)
-        boxes.addElement(l)
+        self.boxes.insert(l)
+        boxes.insert(l)
         self.board[l.coordinate] = l
         
         l = Box(column: 0, row: 2, boxType: .Red)
-        self.boxes.addElement(l)
-        boxes.addElement(l)
+        self.boxes.insert(l)
+        boxes.insert(l)
         self.board[l.coordinate] = l
         
         l = Box(column: 1, row: 2, boxType: .Red)
-        self.boxes.addElement(l)
-        boxes.addElement(l)
+        self.boxes.insert(l)
+        boxes.insert(l)
         self.board[l.coordinate] = l
         
         var i = Box(column: 2, row: 4, boxType: .Blue)
-        self.boxes.addElement(i)
-        boxes.addElement(i)
+        self.boxes.insert(i)
+        boxes.insert(i)
         self.board[i.coordinate] = i
         
         i = Box(column: 2, row: 3, boxType: .Blue)
-        self.boxes.addElement(i)
-        boxes.addElement(i)
+        self.boxes.insert(i)
+        boxes.insert(i)
         self.board[i.coordinate] = i
         
         i = Box(column: 2, row: 2, boxType: .Blue)
-        self.boxes.addElement(i)
-        boxes.addElement(i)
+        self.boxes.insert(i)
+        boxes.insert(i)
         self.board[i.coordinate] = i
         
         var n = Box(column: 3, row: 4, boxType: .Green)
-        self.boxes.addElement(n)
-        boxes.addElement(n)
+        self.boxes.insert(n)
+        boxes.insert(n)
         self.board[n.coordinate] = n
         
         n = Box(column: 3, row: 3, boxType: .Green)
-        self.boxes.addElement(n)
-        boxes.addElement(n)
+        self.boxes.insert(n)
+        boxes.insert(n)
         self.board[n.coordinate] = n
         
         n = Box(column: 3, row: 2, boxType: .Green)
-        self.boxes.addElement(n)
-        boxes.addElement(n)
+        self.boxes.insert(n)
+        boxes.insert(n)
         self.board[n.coordinate] = n
 
         n = Box(column: 4, row: 4, boxType: .Green)
-        self.boxes.addElement(n)
-        boxes.addElement(n)
+        self.boxes.insert(n)
+        boxes.insert(n)
         self.board[n.coordinate] = n
         
         n = Box(column: 4, row: 3, boxType: .Green)
-        self.boxes.addElement(n)
-        boxes.addElement(n)
+        self.boxes.insert(n)
+        boxes.insert(n)
         self.board[n.coordinate] = n
         
         n = Box(column: 4, row: 2, boxType: .Green)
-        self.boxes.addElement(n)
-        boxes.addElement(n)
+        self.boxes.insert(n)
+        boxes.insert(n)
         self.board[n.coordinate] = n
         
         var e = Box(column: 6, row: 4, boxType: .Yellow)
-        self.boxes.addElement(e)
-        boxes.addElement(e)
+        self.boxes.insert(e)
+        boxes.insert(e)
         self.board[e.coordinate] = e
         
         e = Box(column: 5, row: 4, boxType: .Yellow)
-        self.boxes.addElement(e)
-        boxes.addElement(e)
+        self.boxes.insert(e)
+        boxes.insert(e)
         self.board[e.coordinate] = e
         
         e = Box(column: 5, row: 3, boxType: .Yellow)
-        self.boxes.addElement(e)
-        boxes.addElement(e)
+        self.boxes.insert(e)
+        boxes.insert(e)
         self.board[e.coordinate] = e
         
         e = Box(column: 5, row: 2, boxType: .Yellow)
-        self.boxes.addElement(e)
-        boxes.addElement(e)
+        self.boxes.insert(e)
+        boxes.insert(e)
         self.board[e.coordinate] = e
         
         e = Box(column: 6, row: 2, boxType: .Yellow)
-        self.boxes.addElement(e)
-        boxes.addElement(e)
+        self.boxes.insert(e)
+        boxes.insert(e)
         self.board[e.coordinate] = e
         
         return boxes
@@ -164,14 +164,14 @@ class Game {
         }
         
         var boxes = Set<Box>()
-        for i in 0..<numberOfBoxes{
+        for _ in 0..<numberOfBoxes{
             var box: Box
-            do {
+            repeat {
                 box = Box.random()
-            } while (self.boxes.containsElement(box))
+            } while (self.boxes.contains(box))
             
-            self.boxes.addElement(box)
-            boxes.addElement(box)
+            self.boxes.insert(box)
+            boxes.insert(box)
             self.board[box.coordinate] = box
         }
         
@@ -181,7 +181,7 @@ class Game {
     func removeBoxes(boxes: Set<Box>) {
         for box in boxes {
             self.board[box.coordinate] = nil
-            self.boxes.removeElement(box)
+            self.boxes.remove(box)
         }
     }
     
@@ -190,20 +190,20 @@ class Game {
         
         if let foundMove = lookup.findMove() {
             self.board[move.box.coordinate] = nil
-            self.boxes.removeElement(move.box)
+            self.boxes.remove(move.box)
             move.box.coordinate = move.coordinate
             self.board[move.coordinate] = move.box
-            self.boxes.addElement(move.box)
+            self.boxes.remove(move.box)
             
-            if let chain = self.chainAtCoordinate(move.coordinate) {
+            if let chain = self.chainAtCoordinate(coordinate: move.coordinate) {
                 self.score += self.multiplier * chain.score
                 if self.score >= 80 && self.currentLevel == 2 {
-                    self.currentLevel++
+                    self.currentLevel += 1
                 }
                 if self.score >= 180 && self.currentLevel == 3 {
-                    self.currentLevel++
+                    self.currentLevel += 1
                 }
-                self.multiplier++
+                self.multiplier += 1
                 return (chain, foundMove)
             } else {
                 self.multiplier = 1
@@ -218,74 +218,132 @@ class Game {
     func chainAtCoordinate(coordinate: Coordinate) -> Chain? {
         if let box = self.board[coordinate] {
             var chain = Chain(score: 0)
-            chain.append(box)
+            chain.append(box: box)
             let boxColor = self.board[coordinate]!.boxType
             
             var possibleChain = [Box]()
-            var horzLength = 1
-            for var i = coordinate.column - 1; i >= 0 && self.board[(i, coordinate.row)]?.boxType == boxColor;
-                --i, ++horzLength {
+            var horzLength = 0
+            var i = coordinate.column
+            
+            repeat {
+                if !possibleChain.contains(self.board[(i, coordinate.row)]!) {
                     possibleChain.append(self.board[(i, coordinate.row)]!)
-            }
-            for var i = coordinate.column + 1; i < NumColumns && self.board[(i, coordinate.row)]?.boxType == boxColor;
-                ++i, ++horzLength {
+                    horzLength += 1
+                }
+                i -= 1
+            } while i >= 0 && self.board[(i, coordinate.row)]?.boxType == boxColor
+            
+            i = coordinate.column
+            
+            repeat {
+                if !possibleChain.contains(self.board[(i, coordinate.row)]!) {
                     possibleChain.append(self.board[(i, coordinate.row)]!)
-            }
+                    horzLength += 1
+                }
+                i += 1
+            } while i < NumColumns && self.board[(i, coordinate.row)]?.boxType == boxColor
+            
             if horzLength >= 4 {
-                chain.append(possibleChain)
+                chain.append(boxes: possibleChain)
                 return chain
             }
             
             chain = Chain(score: 0)
-            chain.append(box)
+            chain.append(box: box)
             possibleChain = [Box]()
-            var vertLength = 1
-            for var i = coordinate.row - 1; i >= 0 && self.board[(coordinate.column, i)]?.boxType == boxColor;
-                --i, ++vertLength {
+            var vertLength = 0
+            
+            i = coordinate.row
+            repeat {
+                if !possibleChain.contains(self.board[(coordinate.column, i)]!) {
                     possibleChain.append(self.board[(coordinate.column, i)]!)
-            }
-            for var i = coordinate.row + 1; i < NumRows && self.board[(coordinate.column, i)]?.boxType == boxColor;
-                ++i, ++vertLength {
+                    vertLength += 1
+                }
+                i -= 1
+            } while i >= 0 && self.board[(coordinate.column, i)]?.boxType == boxColor
+            
+            i = coordinate.row
+            repeat {
+                if !possibleChain.contains(self.board[(coordinate.column, i)]!) {
                     possibleChain.append(self.board[(coordinate.column, i)]!)
-            }
+                    vertLength += 1
+                }
+                i += 1
+            } while i < NumRows && self.board[(coordinate.column, i)]?.boxType == boxColor
+            
             if vertLength >= 4 {
-                chain.append(possibleChain)
+                chain.append(boxes: possibleChain)
                 return chain
             }
             
             // 1st diagonal
             chain = Chain(score: 0)
-            chain.append(box)
+            chain.append(box: box)
             possibleChain = [Box]()
-            var diagnoalLength = 1
-            for var i = coordinate.row + 1, j = coordinate.column - 1; i < NumRows && j >= 0 && self.board[(j, i)]?.boxType == boxColor;
-                ++i, --j, ++diagnoalLength {
+            var diagonalLength = 0
+            
+            i = coordinate.row
+            var j = coordinate.column
+            
+            repeat {
+                if !possibleChain.contains(self.board[(j, i)]!) {
                     possibleChain.append(self.board[(j, i)]!)
-            }
-            for var i = coordinate.row - 1, j = coordinate.column + 1; i >= 0 && j < NumColumns && self.board[(j, i)]?.boxType == boxColor;
-                --i, ++j, ++diagnoalLength {
+                    diagonalLength += 1
+                }
+                i += 1
+                j -= 1
+            } while i < NumRows && j >= 0 && self.board[(j, i)]?.boxType == boxColor
+            
+            i = coordinate.row
+            j = coordinate.column
+            
+            repeat {
+                if !possibleChain.contains(self.board[(j, i)]!) {
                     possibleChain.append(self.board[(j, i)]!)
-            }
-            if diagnoalLength >= 4 {
-                chain.append(possibleChain)
+                    diagonalLength += 1
+                }
+                
+                i -= 1
+                j += 1
+            } while i >= 0 && j < NumColumns && self.board[(j, i)]?.boxType == boxColor
+
+            if diagonalLength >= 4 {
+                chain.append(boxes: possibleChain)
                 return chain
             }
             
             // 2nd diagonal
             chain = Chain(score: 0)
-            chain.append(box)
+            chain.append(box: box)
             possibleChain = [Box]()
-            diagnoalLength = 1
-            for var i = coordinate.row - 1, j = coordinate.column - 1; i >= 0 && j >= 0 && self.board[(j, i)]?.boxType == boxColor;
-                --i, --j, ++diagnoalLength {
+            diagonalLength = 0
+            
+            i = coordinate.row
+            j = coordinate.column
+            
+            repeat {
+                if !possibleChain.contains(self.board[(j, i)]!) {
                     possibleChain.append(self.board[(j, i)]!)
-            }
-            for var i = coordinate.row + 1, j = coordinate.column + 1; i < NumRows && j < NumColumns && self.board[(j, i)]?.boxType == boxColor;
-                ++i, ++j, ++diagnoalLength {
+                    diagonalLength += 1
+                }
+                i -= 1
+                j -= 1
+            } while i >= 0 && j >= 0 && self.board[(j, i)]?.boxType == boxColor
+
+            i = coordinate.row
+            j = coordinate.column
+            
+            repeat {
+                if !possibleChain.contains(self.board[(j, i)]!) {
                     possibleChain.append(self.board[(j, i)]!)
-            }
-            if diagnoalLength >= 4 {
-                chain.append(possibleChain)
+                    diagonalLength += 1
+                }
+                i += 1
+                j += 1
+            } while i < NumRows && j < NumColumns && self.board[(j, i)]?.boxType == boxColor
+
+            if diagonalLength >= 4 {
+                chain.append(boxes: possibleChain)
                 return chain
             }
             

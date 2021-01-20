@@ -18,11 +18,11 @@ class GameViewController: UIViewController, GameDelegate {
         super.viewDidLoad()
         
         self.subscribeToNotifications()
-        GameKitHelper.sharedGameKitHelper.authenticateLocalPlayer()
+//        GameKitHelper.sharedGameKitHelper.authenticateLocalPlayer()
             
         // Configure the view.
-        let skView = self.view as SKView
-        skView.multipleTouchEnabled = false
+        let skView = self.view as! SKView
+        skView.isMultipleTouchEnabled = false
         skView.backgroundColor = UIColor.linesWhiteColor()
         
         /* Sprite Kit applies additional optimizations to improve rendering performance */
@@ -32,7 +32,7 @@ class GameViewController: UIViewController, GameDelegate {
 //        self.scene = GameScene(size: skView.bounds.size)
 
         /* Set the scale mode to scale to fit the window */
-        scene.scaleMode = .AspectFill
+        scene.scaleMode = .aspectFill
         scene.backgroundColor = SKColor.linesWhiteColor()
         
         skView.presentScene(scene)
@@ -46,7 +46,7 @@ class GameViewController: UIViewController, GameDelegate {
         self.startTutorial()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         self.unsubscribeFromNotifications()
@@ -55,68 +55,68 @@ class GameViewController: UIViewController, GameDelegate {
     // MARK: - Notifications
     
     private func subscribeToNotifications() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("showAuthenticationViewController:"), name: PresentAuthenticationViewControllerNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("applicationDidEnterBackground:"), name: UIApplicationDidEnterBackgroundNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("applicationWillTerminate:"), name: UIApplicationWillTerminateNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: Selector(("showAuthenticationViewController:")), name: NSNotification.Name(rawValue: PresentAuthenticationViewControllerNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationWillTerminate(_:)), name: UIApplication.willTerminateNotification, object: nil)
     }
     
     private func unsubscribeFromNotifications() {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: PresentAuthenticationViewControllerNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationDidEnterBackgroundNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIApplicationWillTerminateNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: PresentAuthenticationViewControllerNotification), object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.willTerminateNotification, object: nil)
     }
     
     func showAuthenticationViewController(notification: NSNotification) {
-        self.presentViewController(GameKitHelper.sharedGameKitHelper.authenticationViewController, animated: true, completion: nil)
+        self.present(GameKitHelper.sharedGameKitHelper.authenticationViewController, animated: true, completion: nil)
     }
     
     func applicationDidEnterBackground(notification: NSNotification) {
-        GameKitHelper.sharedGameKitHelper.reportScore(Int64(self.game.score))
+        GameKitHelper.sharedGameKitHelper.reportScore(value: Int64(self.game.score))
     }
     
     func applicationWillTerminate(notification: NSNotification) {
-        GameKitHelper.sharedGameKitHelper.reportScore(Int64(self.game.score))
+        GameKitHelper.sharedGameKitHelper.reportScore(value: Int64(self.game.score))
     }
     
     // MARK: - Private methods
     
     private func beginGame() {
         let newBoxes = self.game.createInitialBoxes()
-        self.scene.addSpritesForBoxes(newBoxes)
+        self.scene.addSpritesForBoxes(boxes: newBoxes)
     }
     
     private func startTutorial() {
         let newBoxes = self.game.createTutorialBoxes()
-        self.scene.addSpritesForBoxes(newBoxes)
+        self.scene.addSpritesForBoxes(boxes: newBoxes)
     }
     
     // MARK: - Overridden
 
-    override func shouldAutorotate() -> Bool {
-        return true
-    }
-
-    override func supportedInterfaceOrientations() -> Int {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return Int(UIInterfaceOrientationMask.Portrait.toRaw())
-        } else {
-            return Int(UIInterfaceOrientationMask.Portrait.toRaw())
-        }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
-    }
-
-    override func prefersStatusBarHidden() -> Bool {
-        return true
-    }
+//    override func shouldAutorotate() -> Bool {
+//        return true
+//    }
+//
+//    override func supportedInterfaceOrientations() -> Int {
+//        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+//            return Int(UIInterfaceOrientationMask.Portrait.toRaw())
+//        } else {
+//            return Int(UIInterfaceOrientationMask.Portrait.toRaw())
+//        }
+//    }
+//
+//    override func didReceiveMemoryWarning() {
+//        super.didReceiveMemoryWarning()
+//        // Release any cached data, images, etc that aren't in use.
+//    }
+//
+//    override func prefersStatusBarHidden() -> Bool {
+//        return true
+//    }
     
     // MARK: - GameDelegate
     
     func game(game: Game, didUpdateScore score: Int) {
-        self.scene.updateScore(score)
+        self.scene.updateScore(score: score)
     }
     
     func game(game: Game, didUpdateMultiplier multiplier: Int) {
@@ -128,6 +128,6 @@ class GameViewController: UIViewController, GameDelegate {
     }
     
     func gameDidFinish(game: Game) {
-        println("Game Over")
+        
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-enum BoxType: Int, Printable {
+enum BoxType: Int {
     case Unknown = 0,
     Red,
     Blue,
@@ -24,7 +24,7 @@ enum BoxType: Int, Printable {
             "YellowBox"
             ]
             
-        return spriteNames[self.toRaw() - 1]
+        return spriteNames[self.rawValue - 1]
     }
     
     var spriteColor: UIColor {
@@ -35,11 +35,11 @@ enum BoxType: Int, Printable {
             UIColor.linesYellowColor()
             ]
             
-        return spriteColors[self.toRaw() - 1]
+        return spriteColors[self.rawValue - 1]
     }
     
     static func random() -> BoxType {
-        return BoxType.fromRaw(Int(arc4random_uniform(4)) + 1)!
+        return BoxType(rawValue: (Int(arc4random_uniform(4)) + 1))!
     }
     
     // MARK: - Printable
@@ -53,7 +53,7 @@ func ==(lhs: Box, rhs: Box) -> Bool {
     return lhs.coordinate == rhs.coordinate
 }
 
-class Box: Printable, Equatable, Hashable {
+class Box: Equatable, Hashable {
     var coordinate: Coordinate
     var boxType: BoxType
     var sprite: SKSpriteNode?
@@ -65,8 +65,8 @@ class Box: Printable, Equatable, Hashable {
     }
     
     class func random() -> Box {
-        var column = Int(arc4random_uniform(UInt32(NumColumns)))
-        var row = Int(arc4random_uniform(UInt32(NumRows)))
+        let column = Int(arc4random_uniform(UInt32(NumColumns)))
+        let row = Int(arc4random_uniform(UInt32(NumRows)))
         
         return Box(column: column, row: row, boxType: BoxType.random())
     }
@@ -78,8 +78,7 @@ class Box: Printable, Equatable, Hashable {
     }
     
     // MARK: - Hashable
-    
-    var hashValue: Int {
-        return self.coordinate.row*10 + self.coordinate.column
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.coordinate.row * 10 + self.coordinate.column)
     }
 }

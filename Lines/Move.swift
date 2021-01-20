@@ -12,7 +12,7 @@ func ==(lhs: Move, rhs: Move) -> Bool {
     return lhs.box == rhs.box && lhs.coordinate == rhs.coordinate
 }
 
-struct Move: Printable, Hashable {
+struct Move: Hashable {
     let box: Box
     let coordinate: Coordinate
     
@@ -30,8 +30,7 @@ struct Move: Printable, Hashable {
     }
     
     // MARK: Hashable
-    
-    var hashValue: Int {
-        return self.box.hashValue
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.box)
     }
 }

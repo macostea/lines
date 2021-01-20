@@ -9,6 +9,11 @@
 import UIKit
 import GameKit
 
+import os.log
+
+@available(iOS 10.0, *)
+let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "gamekit")
+
 let PresentAuthenticationViewControllerNotification = "PresentAuthenticationViewControllerNotification"
 
 private let _sharedGameKitHelper = GameKitHelper()
@@ -16,12 +21,12 @@ private let _sharedGameKitHelper = GameKitHelper()
 class GameKitHelper: NSObject {
     var authenticationViewController: UIViewController! {
         didSet {
-            NSNotificationCenter.defaultCenter().postNotificationName(PresentAuthenticationViewControllerNotification, object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: PresentAuthenticationViewControllerNotification), object: nil)
         }
     }
     var lastError: NSError! {
         willSet {
-            println(newValue)
+            os_log("error = %@", type: .error, newValue)
         }
     }
     
@@ -38,11 +43,11 @@ class GameKitHelper: NSObject {
     }
     
     func authenticateLocalPlayer() {
-        let localPlayer = GKLocalPlayer.localPlayer()
+        let localPlayer = GKLocalPlayer.local
         
         localPlayer.authenticateHandler = {(viewController, error) in
             if error != nil {
-                self.lastError = error
+                self.lastError = error as NSError?
                 return
             }
             
@@ -50,11 +55,11 @@ class GameKitHelper: NSObject {
                 self.authenticationViewController = viewController
             }
             
-            self.enableGameCenter = GKLocalPlayer.localPlayer().authenticated
+            self.enableGameCenter = GKLocalPlayer.local.isAuthenticated
             
-            GKLocalPlayer.localPlayer().loadDefaultLeaderboardIdentifierWithCompletionHandler({ (leaderboardID, error) -> Void in
+            GKLocalPlayer.local.loadDefaultLeaderboardIdentifier(completionHandler: { (leaderboardID, error) -> Void in
                 if error != nil {
-                    self.lastError = error
+                    self.lastError = error as NSError?
                 }
                 
                 self.leaderboard = leaderboardID
@@ -63,13 +68,13 @@ class GameKitHelper: NSObject {
     }
     
     func reportScore(value: Int64) {
-        if let leaderboard = self.leaderboard {
-            let score = GKScore(leaderboardIdentifier: self.leaderboard)
+        if self.leaderboard != nil {
+            let score = GKScore(leaderboardIdentifier: self.leaderboard!)
             score.value = value
             
-            GKScore.reportScores([score], withCompletionHandler: { (error) -> Void in
+            GKScore.report([score], withCompletionHandler: { (error) -> Void in
                 if error != nil {
-                    self.lastError = error
+                    self.lastError = error as NSError?
                 }
             })
         }

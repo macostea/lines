@@ -16,7 +16,7 @@ struct Array2D<T> {
     init(columns: Int, rows: Int) {
         self.columns = columns
         self.rows = rows
-        self.array = Array<T?>(count: rows * columns, repeatedValue: nil)
+        self.array = Array<T?>(repeating: nil, count: rows * columns)
     }
     
     subscript(coordinate: Coordinate) -> T? {

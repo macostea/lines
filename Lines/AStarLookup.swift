@@ -24,45 +24,46 @@ class AStarLookup {
     
     func findMove() -> Move? {
         var pathFound = false
-        self.insertInOpenSteps(Step(position: self.source))
-        do {
-            var currentStep = self.openSteps.first
+        self.insertInOpenSteps(step: Step(position: self.source))
+        repeat {
+            let currentStep = self.openSteps.first
             self.closedSteps.append(currentStep!)
-            self.openSteps.removeAtIndex(0)
+            self.openSteps.remove(at: 0)
             if currentStep!.position == self.destination {
                 pathFound = true
                 var move = Move(box: self.board[self.source]!, toCoordinate: self.destination)
                 move.coordinateList = [Coordinate]()
                 var tmpStep = currentStep
-                do {
+                repeat {
                     move.coordinateList?.append(tmpStep!.position)
                     tmpStep = tmpStep!.parent
                 } while tmpStep != nil
                 
-                move.coordinateList = move.coordinateList?.reverse()
+                move.coordinateList?.reverse()
                 return move
             }
             
-            var adjSteps = self.walkableAdjacentBoxesForCoordinate(currentStep!.position)
+            let adjSteps = self.walkableAdjacentBoxesForCoordinate(coordinate: currentStep!.position)
             for pos in adjSteps {
                 var step = Step(position: pos)
-                if (find(self.closedSteps, step) != nil) {
+                
+                if (self.closedSteps.firstIndex(of: step) != nil) {
                     continue;
                 }
                 
-                let moveCost = self.costToMoveFromStep(currentStep!, toStep: step)
-                let index = find(self.openSteps, step)
+                let moveCost = self.costToMoveFromStep(step: currentStep!, toStep: step)
+                let index = self.openSteps.firstIndex(of: step)
                 if index == nil {
                     step.parent = currentStep
                     step.gScore = currentStep!.gScore + moveCost
-                    step.hScore = self.computeHScoreFromCoordinate(step.position, toCoordinate: self.destination)
-                    self.insertInOpenSteps(step)
+                    step.hScore = self.computeHScoreFromCoordinate(coordinate: step.position, toCoordinate: self.destination)
+                    self.insertInOpenSteps(step: step)
                 } else {
                     step = self.openSteps[index!]
                     if (currentStep!.gScore + moveCost) < step.gScore {
                         step.gScore = currentStep!.gScore + moveCost
-                        self.openSteps.removeAtIndex(index!)
-                        self.insertInOpenSteps(step)
+                        self.openSteps.remove(at: index!)
+                        self.insertInOpenSteps(step: step)
                     }
                 }
             }
@@ -76,14 +77,16 @@ class AStarLookup {
         let stepFScore = step.fScore()
         let count = self.openSteps.count
         
-        var i=0
-        for ;i<count; i++ {
+        var index = 0
+        
+        for i in 0..<count {
             if stepFScore <= (self.openSteps[i] as Step).fScore() {
+                index = i
                 break;
             }
         }
         
-        self.openSteps.insert(step, atIndex: i)
+        self.openSteps.insert(step, at: index)
     }
     
     private func computeHScoreFromCoordinate(coordinate: Coordinate, toCoordinate: Coordinate) -> Int {
@@ -98,19 +101,19 @@ class AStarLookup {
         var tmp = [Coordinate]()
         
         var coord = (coordinate.column, coordinate.row - 1)
-        if self.isValidCoordinate(coord) {
+        if self.isValidCoordinate(coordinate: coord) {
             tmp.append(coord)
         }
         coord = (coordinate.column, coordinate.row + 1)
-        if self.isValidCoordinate(coord) {
+        if self.isValidCoordinate(coordinate: coord) {
             tmp.append(coord)
         }
         coord = (coordinate.column - 1, coordinate.row)
-        if self.isValidCoordinate(coord) {
+        if self.isValidCoordinate(coordinate: coord) {
             tmp.append(coord)
         }
         coord = (coordinate.column + 1, coordinate.row)
-        if self.isValidCoordinate(coord) {
+        if self.isValidCoordinate(coordinate: coord) {
             tmp.append(coord)
         }
         

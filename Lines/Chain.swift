@@ -18,14 +18,14 @@ struct Chain {
     }
     
     mutating func append(box: Box) {
-        self.boxes.addElement(box)
-        self.score++
+        self.boxes.insert(box)
+        self.score += 1
     }
     
     mutating func append(boxes: [Box]) {
         for box in boxes {
-            self.boxes.addElement(box)
-            self.score++
+            self.boxes.insert(box)
+            self.score += 1
         }
     }
     
